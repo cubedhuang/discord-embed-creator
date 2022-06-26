@@ -1,0 +1,99 @@
+@import url("http://fonts.cdnfonts.com/css/whitney");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@for $i from 3 through 7 {
+	@font-face {
+		font-family: "Whitney";
+		font-style: "normal";
+		font-weight: #{$i}00;
+		src: url("/font/whitney-#{$i}00.woff2") format("woff2"),
+			url("/font/whitney-#{$i}00.woff") format("woff");
+		font-display: "swap";
+	}
+}
+
+@layer base {
+	html,
+	body {
+		font-family: "Whitney", "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size: 16px;
+		line-height: 1.5;
+		color: #dcddde;
+		background-color: #2f3136;
+		accent-color: #00b0f4;
+	}
+
+	body {
+		max-height: 100vh;
+		overflow-y: hidden;
+	}
+
+	::-webkit-scrollbar {
+		width: 0.5rem;
+	}
+	::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	::-webkit-scrollbar-thumb {
+		background: #202225;
+		border-radius: 0.5rem;
+	}
+	// ::-webkit-scrollbar-thumb:hover {
+	// 	background: #555;
+	// }
+}
+
+@layer components {
+	.screen > * {
+		max-height: 100vh;
+		overflow-y: auto;
+	}
+
+	.embed-inputs {
+		@apply p-8 flex flex-col gap-4;
+
+		label {
+			@apply text-sm mr-2;
+		}
+
+		textarea,
+		input[type="text"],
+		input[type="color"] {
+			@apply min-h-[2.5rem] w-1/2 bg-[#292b2f] text-white px-4 py-2 rounded border border-transparent transition-colors
+				focus:outline-none focus:border focus:border-[#40444b];
+		}
+
+		input[type="checkbox"] {
+			@apply h-6 w-6 appearance-none cursor-pointer bg-[#292b2f] border border-transparent relative rounded transition-colors
+				after:absolute after:inset-1 after:bg-transparent after:rounded-sm after:transition-colors;
+
+			&:hover,
+			&:focus {
+				@apply outline-none border-[#40444b];
+			}
+
+			&:checked {
+				@apply after:bg-[#00b0f4];
+			}
+		}
+
+		> * {
+			@apply flex justify-end items-center;
+		}
+
+		> .fields {
+			@apply flex flex-col gap-2 items-end;
+
+			> div {
+				@apply w-full flex flex-col gap-2 items-end p-2 border-2 border-transparent border-r-[#40444b] rounded-lg;
+
+				> div {
+					@apply w-full flex justify-end items-center;
+				}
+			}
+		}
+	}
+}
