@@ -1,3 +1,3 @@
-# discord.js-embed-creator
+# Discord Embed Creator
 
-Generate code for discord.js embeds.
+Generate code for embeds in discord.js and discord.py!
