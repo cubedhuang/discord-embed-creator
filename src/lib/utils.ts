@@ -1,7 +1,10 @@
 import type { Embed } from "./interfaces";
 
 export function embedToJson(embed: Embed): string {
-	return JSON.stringify(clearObjectEmpty(embed), null, 2);
+	return JSON.stringify(clearObjectEmpty(embed), null, 2).replace(
+		/"(\w+)":/g,
+		"$1:"
+	);
 }
 
 function clearObjectEmpty<T extends object>(obj: T): Partial<T> {
