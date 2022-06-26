@@ -1,11 +1,12 @@
 export default function LimitedInput({
 	limit,
 	textarea = false,
+	required = false,
 	...props
 }: React.DetailedHTMLProps<
 	React.InputHTMLAttributes<HTMLInputElement>,
 	HTMLInputElement
-> & { limit: number; textarea?: boolean }) {
+> & { limit: number; textarea?: boolean; required?: boolean }) {
 	const Element: keyof JSX.IntrinsicElements = textarea
 		? "textarea"
 		: "input";
@@ -17,7 +18,7 @@ export default function LimitedInput({
 				{...props}
 				style={
 					typeof props.value === "string" &&
-					props.value.length > limit
+					(props.value.length > limit || (required && !props.value))
 						? { ...props.style, borderColor: "#df4549" }
 						: props.style
 				}
@@ -31,6 +32,14 @@ export default function LimitedInput({
 				>
 					{typeof props.value === "string" && props.value.length}/
 					{limit}
+				</span>
+			) : typeof props.value === "string" && !props.value ? (
+				<span
+					className={`absolute pointer-events-none text-xs right-1 ${
+						textarea ? "bottom-3" : "bottom-1"
+					}`}
+				>
+					This field is required.
 				</span>
 			) : null}
 		</div>

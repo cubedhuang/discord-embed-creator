@@ -2,6 +2,8 @@ import { useState } from "react";
 
 import DiscordEmbed from "../components/DiscordEmbed";
 import LimitedInput from "../components/LimitedInput";
+import type { Embed } from "../lib/interfaces";
+import { embedToJson } from "../lib/utils";
 
 export default function Home() {
 	const [authorIcon, setAuthorIcon] = useState("");
@@ -46,6 +48,30 @@ export default function Home() {
 	);
 
 	const [timestamp, setTimestamp] = useState<number | undefined>(undefined);
+
+	const embed: Embed = {
+		author: {
+			name: authorName.trim(),
+			iconUrl: authorIcon.trim(),
+			url: authorUrl.trim()
+		},
+		title: title.trim(),
+		url: url.trim(),
+		description: description.trim(),
+		fields: fields.map(field => ({
+			name: field.name.trim(),
+			value: field.value.trim(),
+			inline: field.inline
+		})),
+		thumbnail: thumbnail.trim(),
+		image: image.trim(),
+		color: color.trim(),
+		footer: {
+			text: footerText.trim(),
+			iconUrl: footerIcon.trim()
+		},
+		timestamp
+	};
 
 	return (
 		<div className="screen flex min-h-screen">
@@ -180,6 +206,7 @@ export default function Home() {
 								</label>
 								<LimitedInput
 									limit={256}
+									required={true}
 									type="text"
 									id={`field-name-${index}`}
 									value={field.name}
@@ -196,6 +223,7 @@ export default function Home() {
 								</label>
 								<LimitedInput
 									limit={1024}
+									required={true}
 									textarea={true}
 									id={`field-value-${index}`}
 									value={field.value}
@@ -307,31 +335,15 @@ export default function Home() {
 				</div>
 			</div>
 			<div className="flex-1 bg-[#36393f] p-8">
-				<DiscordEmbed
-					embed={{
-						author: {
-							name: authorName.trim(),
-							iconUrl: authorIcon.trim(),
-							url: authorUrl.trim()
-						},
-						title: title.trim(),
-						url: url.trim(),
-						description: description.trim(),
-						fields: fields.map(field => ({
-							name: field.name.trim(),
-							value: field.value.trim(),
-							inline: field.inline
-						})),
-						thumbnail: thumbnail.trim(),
-						image: image.trim(),
-						color: color.trim(),
-						footer: {
-							text: footerText.trim(),
-							iconUrl: footerIcon.trim()
-						},
-						timestamp
-					}}
-				/>
+				<DiscordEmbed embed={embed} />
+
+				<div className="mt-8">
+					<h2 className="text-xl font-semibold text-white">Output</h2>
+
+					<pre className="bg-[#292b2f] p-2 text-sm rounded whitespace-pre-wrap">
+						{embedToJson(embed)}
+					</pre>
+				</div>
 			</div>
 		</div>
 	);
