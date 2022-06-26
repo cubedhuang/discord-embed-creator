@@ -41,9 +41,6 @@
 		background: #202225;
 		border-radius: 0.5rem;
 	}
-	// ::-webkit-scrollbar-thumb:hover {
-	// 	background: #555;
-	// }
 }
 
 @layer components {
@@ -77,6 +74,15 @@
 
 			&:checked {
 				@apply after:bg-[#00b0f4];
+			}
+		}
+
+		.limited-input {
+			@apply w-1/2;
+
+			input,
+			textarea {
+				@apply w-full;
 			}
 		}
 

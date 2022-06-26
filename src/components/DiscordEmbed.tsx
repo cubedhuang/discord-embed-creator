@@ -38,7 +38,7 @@ export default function DiscordEmbed({ embed }: { embed: Embed }) {
 		>
 			<div className="overflow-hidden p-[.5rem_1rem_1rem_.75rem] inline-grid grid-cols-[auto] grid-rows-[auto]">
 				{/* Author */}
-				{embed.author ? (
+				{embed.author.name || embed.author.iconUrl ? (
 					<div className="min-w-0 flex items-center col-[1/1] mt-2">
 						{/* Author Icon */}
 						{embed.author.iconUrl ? (
@@ -140,7 +140,7 @@ export default function DiscordEmbed({ embed }: { embed: Embed }) {
 				) : null}
 
 				{/* Footer */}
-				{embed.footer ? (
+				{embed.footer.text || embed.footer.iconUrl ? (
 					<div
 						className={`min-w-0 flex items-center mt-2 row-auto ${
 							embed.thumbnail ? "col-[1/3]" : "col-[1/1]"

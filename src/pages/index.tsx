@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import DiscordEmbed from "../components/DiscordEmbed";
+import LimitedInput from "../components/LimitedInput";
 
 export default function Home() {
 	const [authorIcon, setAuthorIcon] = useState("");
@@ -37,7 +38,7 @@ export default function Home() {
 		"https://dan.onl/images/emptysong.jpg"
 	);
 
-	const [color, setColor] = useState("#00b0f4");
+	const [color, setColor] = useState("#202225");
 
 	const [footerText, setFooterText] = useState("This is the footer!");
 	const [footerIcon, setFooterIcon] = useState(
@@ -49,9 +50,24 @@ export default function Home() {
 	return (
 		<div className="screen flex min-h-screen">
 			<div className="flex-1 embed-inputs">
+				{title.length +
+					description.length +
+					fields.reduce(
+						(acc, cur) => acc + cur.name.length + cur.value.length,
+						0
+					) +
+					footerText.length +
+					authorName.length >
+				6000 ? (
+					<div className="w-fit ml-auto px-4 py-2 rounded bg-[#d83c3e] font-semibold text-white">
+						The total number of characters in the embed content must
+						not exceed 6000!
+					</div>
+				) : null}
 				<div>
 					<label htmlFor="author-name">Author Name</label>
-					<input
+					<LimitedInput
+						limit={256}
 						type="text"
 						id="author-name"
 						value={authorName}
@@ -78,7 +94,8 @@ export default function Home() {
 				</div>
 				<div>
 					<label htmlFor="title">Title</label>
-					<input
+					<LimitedInput
+						limit={256}
 						type="text"
 						id="title"
 						value={title}
@@ -96,7 +113,9 @@ export default function Home() {
 				</div>
 				<div>
 					<label htmlFor="description">Description</label>
-					<textarea
+					<LimitedInput
+						limit={4096}
+						textarea={true}
 						id="description"
 						value={description}
 						onChange={e => setDescription(e.target.value)}
@@ -107,10 +126,60 @@ export default function Home() {
 					{fields.map((field, index) => (
 						<div key={index}>
 							<div>
+								{index !== 0 ? (
+									<button
+										onClick={() => {
+											const newFields = [...fields];
+											[
+												newFields[index - 1],
+												newFields[index]
+											] = [
+												newFields[index],
+												newFields[index - 1]
+											];
+											setFields(newFields);
+										}}
+										className="mr-2 font-medium py-1 px-2 rounded transition bg-[#5865f2] hover:bg-[#4752c4] text-white"
+									>
+										Move Up
+									</button>
+								) : null}
+								{index !== fields.length - 1 ? (
+									<button
+										onClick={() => {
+											const newFields = [...fields];
+											[
+												newFields[index + 1],
+												newFields[index]
+											] = [
+												newFields[index],
+												newFields[index + 1]
+											];
+											setFields(newFields);
+										}}
+										className="mr-2 font-medium py-1 px-2 rounded transition bg-[#5865f2] hover:bg-[#4752c4] text-white"
+									>
+										Move Down
+									</button>
+								) : null}
+								<button
+									onClick={() => {
+										setFields(
+											fields.filter((_, i) => i !== index)
+										);
+									}}
+									className="mr-2 font-medium py-1 px-2 rounded transition bg-[#d83c3e] hover:bg-[#a12d2f] text-white"
+								>
+									Delete
+								</button>
+								<h3>Field {index + 1}</h3>
+							</div>
+							<div>
 								<label htmlFor={`field-name-${index}`}>
 									Name
 								</label>
-								<input
+								<LimitedInput
+									limit={256}
 									type="text"
 									id={`field-name-${index}`}
 									value={field.name}
@@ -125,7 +194,9 @@ export default function Home() {
 								<label htmlFor={`field-value-${index}`}>
 									Value
 								</label>
-								<textarea
+								<LimitedInput
+									limit={1024}
+									textarea={true}
 									id={`field-value-${index}`}
 									value={field.value}
 									onChange={e => {
@@ -156,16 +227,21 @@ export default function Home() {
 					<button
 						type="button"
 						onClick={() => {
-							setFields([
-								...fields,
-								{
-									name: "",
-									value: "",
-									inline: false
-								}
-							]);
+							if (fields.length < 25)
+								setFields([
+									...fields,
+									{
+										name: "",
+										value: "",
+										inline: false
+									}
+								]);
 						}}
-						className=""
+						className={`font-medium py-1 px-2 rounded transition ${
+							fields.length < 25
+								? "bg-[#5865f2] hover:bg-[#4752c4] text-white "
+								: "bg-[#4f545c] cursor-not-allowed"
+						}`}
 					>
 						Add Field
 					</button>
@@ -199,7 +275,8 @@ export default function Home() {
 				</div>
 				<div>
 					<label htmlFor="footer-text">Footer Text</label>
-					<input
+					<LimitedInput
+						limit={2048}
 						type="text"
 						id="footer-text"
 						value={footerText}
@@ -233,20 +310,24 @@ export default function Home() {
 				<DiscordEmbed
 					embed={{
 						author: {
-							name: authorName,
-							iconUrl: authorIcon,
-							url: authorUrl
+							name: authorName.trim(),
+							iconUrl: authorIcon.trim(),
+							url: authorUrl.trim()
 						},
-						title,
-						url,
-						description,
-						fields,
-						thumbnail,
-						image,
-						color,
+						title: title.trim(),
+						url: url.trim(),
+						description: description.trim(),
+						fields: fields.map(field => ({
+							name: field.name.trim(),
+							value: field.value.trim(),
+							inline: field.inline
+						})),
+						thumbnail: thumbnail.trim(),
+						image: image.trim(),
+						color: color.trim(),
 						footer: {
-							text: footerText,
-							iconUrl: footerIcon
+							text: footerText.trim(),
+							iconUrl: footerIcon.trim()
 						},
 						timestamp
 					}}
