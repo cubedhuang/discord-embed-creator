@@ -232,23 +232,23 @@ export default function Home() {
 			<div className="flex-1 bg-[#36393f] p-8">
 				<DiscordEmbed
 					embed={{
-						title,
-						description,
-						fields,
-						footer: {
-							text: footerText,
-							iconUrl: footerIcon
-						},
 						author: {
 							name: authorName,
 							iconUrl: authorIcon,
 							url: authorUrl
 						},
-						timestamp,
+						title,
+						url,
+						description,
+						fields,
 						thumbnail,
 						image,
-						url,
-						color
+						color,
+						footer: {
+							text: footerText,
+							iconUrl: footerIcon
+						},
+						timestamp
 					}}
 				/>
 			</div>
