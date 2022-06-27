@@ -33,7 +33,7 @@ export default function LimitedInput({
 					{typeof props.value === "string" && props.value.length}/
 					{limit}
 				</span>
-			) : typeof props.value === "string" && !props.value ? (
+			) : required && typeof props.value === "string" && !props.value ? (
 				<span
 					className={`absolute pointer-events-none text-xs right-1 ${
 						textarea ? "bottom-3" : "bottom-1"
