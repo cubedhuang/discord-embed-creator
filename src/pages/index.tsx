@@ -190,7 +190,7 @@ __Underline__
 					<summary>
 						<h2>
 							Author
-							{title ? (
+							{authorName ? (
 								<> &ndash; {ellipses(authorName)}</>
 							) : null}
 						</h2>
