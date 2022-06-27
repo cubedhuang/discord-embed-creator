@@ -1,10 +1,9 @@
 import type { Embed } from "./interfaces";
 
-export function embedToJson(embed: Embed): string {
-	return JSON.stringify(clearObjectEmpty(embed), null, 2).replace(
-		/(\n\s*)"(\w+)":/g,
-		"$1$2:"
-	);
+export function embedToJson(embed: Embed, removeKeyQuotes = true): string {
+	const output = JSON.stringify(clearObjectEmpty(embed), null, 2);
+	if (!removeKeyQuotes) return output;
+	return output.replace(/(\n\s*)"(\w+)":/g, "$1$2:");
 }
 
 function clearObjectEmpty<T extends object>(obj: T): Partial<T> {

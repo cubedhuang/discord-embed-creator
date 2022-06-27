@@ -18,13 +18,15 @@ function s(strings: TemplateStringsArray, ...values: string[]) {
 }
 
 export default function Output({ embed }: { embed: Embed }) {
-	const [language, setLanguage] = useState<"js" | "py">("js");
+	const [language, setLanguage] = useState<"json" | "js" | "py">("js");
 	const [jsVersion, setJsVersion] = useState("13");
 	const [jsMode, setJsMode] = useState("chained");
 
 	let output = "";
 
-	if (language === "js") {
+	if (language === "json") {
+		output = embedToJson(embed, false);
+	} else if (language === "js") {
 		if (jsMode !== "object") {
 			output += `const embed = new ${
 				jsVersion === "13" ? "MessageEmbed" : "EmbedBuilder"
@@ -170,6 +172,7 @@ export default function Output({ embed }: { embed: Embed }) {
 					value={language}
 					onChange={e => setLanguage(e.target.value as "js" | "py")}
 				>
+					<option value="json">JSON representation</option>
 					<option value="js">discord.js</option>
 					<option value="py">discord.py</option>
 				</select>
@@ -200,7 +203,10 @@ export default function Output({ embed }: { embed: Embed }) {
 				) : null}
 			</div>
 
-			<Highlight language={language} className="rounded">
+			<Highlight
+				language={language === "json" ? "js" : language}
+				className="rounded"
+			>
 				{output}
 			</Highlight>
 		</div>
