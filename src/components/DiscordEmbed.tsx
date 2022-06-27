@@ -163,7 +163,7 @@ export default function DiscordEmbed({ embed }: { embed: Embed }) {
 									&bull;
 								</span>
 							) : null}
-							{embed.timestamp}
+							{embed.timestamp ? "Today at 12:00 PM" : null}
 						</div>
 					</div>
 				) : null}

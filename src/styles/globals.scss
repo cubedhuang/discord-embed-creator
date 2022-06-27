@@ -45,6 +45,14 @@
 		@apply p-2 bg-[#292b2f] rounded cursor-pointer transition-colors border border-transparent
 			hover:bg-[#2f3136] focus:border-[#40444b];
 	}
+
+	::-webkit-color-swatch-wrapper {
+		padding: 0.5rem;
+		width: 3rem;
+	}
+	::-webkit-color-swatch {
+		border: none;
+	}
 }
 
 @layer components {
@@ -54,21 +62,25 @@
 	}
 
 	.embed-inputs {
-		@apply p-8 flex flex-col gap-4;
+		@apply p-8;
 
 		label {
-			@apply text-sm mr-2;
+			@apply text-white text-sm block mt-2;
 		}
 
 		textarea,
 		input[type="text"],
 		input[type="color"] {
-			@apply min-h-[2.5rem] w-1/2 bg-[#292b2f] text-white px-4 py-2 rounded border border-transparent transition-colors
+			@apply min-h-[2.5rem] w-full bg-[#2f3136] text-inherit px-4 py-2 rounded border border-transparent transition-colors
 				focus:outline-none focus:border focus:border-[#40444b];
 		}
 
+		input[type="color"] {
+			@apply cursor-pointer w-fit p-0;
+		}
+
 		input[type="checkbox"] {
-			@apply h-6 w-6 appearance-none cursor-pointer bg-[#292b2f] border border-transparent relative rounded transition-colors
+			@apply h-6 w-6 appearance-none cursor-pointer bg-[#2f3136] border border-transparent relative rounded transition-colors
 				after:absolute after:inset-1 after:bg-transparent after:rounded-sm after:transition-colors;
 
 			&:hover,
@@ -82,7 +94,7 @@
 		}
 
 		.limited-input {
-			@apply w-1/2;
+			@apply w-full;
 
 			input,
 			textarea {
@@ -91,18 +103,53 @@
 		}
 
 		> * {
-			@apply flex justify-end items-center;
+			@apply bg-[#292b2f] mb-4 p-4 rounded;
+
+			> summary {
+				@apply flex;
+
+				h2 {
+					@apply text-white font-semibold text-lg cursor-pointer leading-none
+						flex items-center text-ellipsis overflow-hidden whitespace-nowrap
+						before:w-6 before:text-xs;
+
+					&::before {
+						content: "▶️";
+					}
+				}
+			}
+
+			&[open] > summary {
+				@apply mb-4;
+
+				h2::before {
+					content: "🔽";
+				}
+			}
 		}
 
-		> .fields {
-			@apply flex flex-col gap-2 items-end;
+		> .fields > details {
+			@apply mt-4 w-full gap-2 items-end p-4 rounded border border-[#37393f];
+
+			> summary {
+				@apply flex flex-row justify-start items-center gap-2 cursor-pointer
+					before:w-4 before:text-xs;
+
+				&::before {
+					content: "▶️";
+				}
+			}
+
+			&[open] > summary {
+				@apply mb-4;
+
+				&::before {
+					content: "🔽";
+				}
+			}
 
 			> div {
-				@apply w-full flex flex-col gap-2 items-end p-2 border-2 border-transparent border-r-[#40444b] rounded-lg;
-
-				> div {
-					@apply w-full flex justify-end items-center;
-				}
+				@apply w-full justify-end items-start;
 			}
 		}
 	}

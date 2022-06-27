@@ -32,7 +32,7 @@ export default function Output({ embed }: { embed: Embed }) {
 				jsVersion === "13" ? "MessageEmbed" : "EmbedBuilder"
 			}()`;
 
-			const steps = [jsMode === "chained" ? "  " : ""];
+			const steps = [""];
 
 			if (embed.author.name || embed.author.url || embed.author.iconUrl) {
 				const substeps = [".setAuthor({"];

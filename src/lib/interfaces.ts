@@ -21,7 +21,7 @@ export interface Embed {
 	/**
 	 * Embed color.
 	 */
-	color: string;
+	color?: string;
 	/**
 	 * Embed image URL.
 	 */

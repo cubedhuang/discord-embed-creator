@@ -25,20 +25,12 @@ export default function LimitedInput({
 			/>
 			{typeof props.value === "string" &&
 			props.value.length > limit * 0.8 ? (
-				<span
-					className={`absolute pointer-events-none text-xs right-0 ${
-						textarea ? "-bottom-2" : "-bottom-3"
-					}`}
-				>
+				<span className="absolute pointer-events-none text-xs right-0 -bottom-4">
 					{typeof props.value === "string" && props.value.length}/
 					{limit}
 				</span>
 			) : required && typeof props.value === "string" && !props.value ? (
-				<span
-					className={`absolute pointer-events-none text-xs right-1 ${
-						textarea ? "bottom-3" : "bottom-1"
-					}`}
-				>
+				<span className="absolute pointer-events-none text-xs right-1 bottom-1">
 					This field is required.
 				</span>
 			) : null}

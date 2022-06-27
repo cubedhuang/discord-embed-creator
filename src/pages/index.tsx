@@ -5,29 +5,35 @@ import LimitedInput from "../components/LimitedInput";
 import Output from "../components/Output";
 import type { Embed } from "../lib/interfaces";
 
+function ellipses(str: string, max = 32) {
+	return str.length > max ? `${str.slice(0, max - 3)}...` : str;
+}
+
 export default function Home() {
 	const [authorIcon, setAuthorIcon] = useState("");
-	const [authorName, setAuthorName] = useState("This is the author!");
+	const [authorName, setAuthorName] = useState("Example Author");
 	const [authorUrl, setAuthorUrl] = useState("https://example.com");
 
-	const [title, setTitle] = useState("This is the title!");
+	const [title, setTitle] = useState("Example Title");
 	const [url, setUrl] = useState("https://example.com");
 
-	const [description, setDescription] = useState("This is the description!");
+	const [description, setDescription] = useState(
+		"This is an example description."
+	);
 
 	const [fields, setFields] = useState([
 		{
-			name: "Field 1",
-			value: "This is the field value!",
+			name: "Field Name",
+			value: "This is the field value.",
 			inline: false
 		},
 		{
-			name: "Field 2",
-			value: "This field is inline!",
+			name: "The first inline field.",
+			value: "This field is inline.",
 			inline: true
 		},
 		{
-			name: "Field 3",
+			name: "The second inline field.",
 			value: "Inline fields are stacked next to each other.",
 			inline: true
 		}
@@ -40,9 +46,9 @@ export default function Home() {
 		"https://dan.onl/images/emptysong.jpg"
 	);
 
-	const [color, setColor] = useState("#202225");
+	const [color, setColor] = useState<string | undefined>("#202225");
 
-	const [footerText, setFooterText] = useState("This is the footer!");
+	const [footerText, setFooterText] = useState("Example footer!");
 	const [footerIcon, setFooterIcon] = useState(
 		"https://slate.dan.onl/slate.png"
 	);
@@ -63,9 +69,9 @@ export default function Home() {
 			value: field.value.trim(),
 			inline: field.inline
 		})),
-		thumbnail: thumbnail.trim(),
 		image: image.trim(),
-		color: color.trim(),
+		thumbnail: thumbnail.trim(),
+		color: color?.trim(),
 		footer: {
 			text: footerText.trim(),
 			iconUrl: footerIcon.trim()
@@ -76,6 +82,71 @@ export default function Home() {
 	return (
 		<div className="screen flex min-h-screen">
 			<div className="flex-1 embed-inputs">
+				<div>
+					<div className="flex justify-between">
+						<h1 className="text-white font-semibold text-2xl">
+							Discord Embed Creator
+						</h1>
+						<a
+							href="https://github.com/cubedhuang/discord-embed-creator"
+							className="hover:underline"
+						>
+							GitHub
+						</a>
+					</div>
+
+					<div className="flex mt-2 gap-2">
+						<button
+							type="button"
+							onClick={() => {
+								setAuthorName("");
+								setAuthorIcon("");
+								setAuthorUrl("");
+								setTitle("");
+								setUrl("");
+								setDescription("");
+								setFields([]);
+								setImage("");
+								setThumbnail("");
+								setColor(undefined);
+								setFooterText("");
+								setFooterIcon("");
+								setTimestamp(undefined);
+							}}
+							className="font-medium py-1 px-2 rounded transition bg-[#d83c3e] hover:bg-[#a12d2f] text-white"
+						>
+							Clear All
+						</button>
+
+						<button
+							type="button"
+							onClick={() => {
+								for (const details of Array.from(
+									document.getElementsByTagName("details")
+								)) {
+									details.open = true;
+								}
+							}}
+							className="font-medium py-1 px-2 rounded transition bg-[#5865f2] hover:bg-[#4752c4] text-white"
+						>
+							Expand All
+						</button>
+						<button
+							type="button"
+							onClick={() => {
+								for (const details of Array.from(
+									document.getElementsByTagName("details")
+								)) {
+									details.open = false;
+								}
+							}}
+							className="font-medium py-1 px-2 rounded transition bg-[#5865f2] hover:bg-[#4752c4] text-white"
+						>
+							Collapse All
+						</button>
+					</div>
+				</div>
+
 				{title.length +
 					description.length +
 					fields.reduce(
@@ -90,68 +161,102 @@ export default function Home() {
 						not exceed 6000!
 					</div>
 				) : null}
-				<div>
-					<label htmlFor="author-name">Author Name</label>
-					<LimitedInput
-						limit={256}
-						type="text"
-						id="author-name"
-						value={authorName}
-						onChange={e => setAuthorName(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="author-url">Author URL</label>
-					<input
-						type="text"
-						id="author-url"
-						value={authorUrl}
-						onChange={e => setAuthorUrl(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="author-icon">Author Icon URL</label>
-					<input
-						type="text"
-						id="author-icon"
-						value={authorIcon}
-						onChange={e => setAuthorIcon(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="title">Title</label>
-					<LimitedInput
-						limit={256}
-						type="text"
-						id="title"
-						value={title}
-						onChange={e => setTitle(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="url">Title URL</label>
-					<input
-						type="text"
-						id="url"
-						value={url}
-						onChange={e => setUrl(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="description">Description</label>
-					<LimitedInput
-						limit={4096}
-						textarea={true}
-						id="description"
-						value={description}
-						onChange={e => setDescription(e.target.value)}
-					/>
-				</div>
-				<div className="fields">
-					<h2 className="text-white font-semibold">Fields</h2>
+				<details open>
+					<summary>
+						<h2>
+							Author
+							{title ? (
+								<> &ndash; {ellipses(authorName)}</>
+							) : null}
+						</h2>
+					</summary>
+					<div>
+						<label htmlFor="author-name">Author Name</label>
+						<LimitedInput
+							limit={256}
+							type="text"
+							id="author-name"
+							value={authorName}
+							onChange={e => setAuthorName(e.target.value)}
+						/>
+					</div>
+					<div>
+						<label htmlFor="author-url">Author URL</label>
+						<input
+							type="text"
+							id="author-url"
+							value={authorUrl}
+							onChange={e => setAuthorUrl(e.target.value)}
+						/>
+					</div>
+					<div>
+						<label htmlFor="author-icon">Author Icon URL</label>
+						<input
+							type="text"
+							id="author-icon"
+							value={authorIcon}
+							onChange={e => setAuthorIcon(e.target.value)}
+						/>
+					</div>
+				</details>
+				<details open>
+					<summary>
+						<h2>
+							Title
+							{title ? <> &ndash; {ellipses(title)}</> : null}
+						</h2>
+					</summary>
+					<div>
+						<label htmlFor="title">Title</label>
+						<LimitedInput
+							limit={256}
+							type="text"
+							id="title"
+							value={title}
+							onChange={e => setTitle(e.target.value)}
+						/>
+					</div>
+					<div>
+						<label htmlFor="url">Title URL</label>
+						<input
+							type="text"
+							id="url"
+							value={url}
+							onChange={e => setUrl(e.target.value)}
+						/>
+					</div>
+				</details>
+				<details open>
+					<summary>
+						<h2>
+							Description
+							{description ? (
+								<> &ndash; {ellipses(description)}</>
+							) : null}
+						</h2>
+					</summary>
+					<div>
+						<label htmlFor="description">Description</label>
+						<LimitedInput
+							limit={4096}
+							textarea={true}
+							id="description"
+							value={description}
+							onChange={e => setDescription(e.target.value)}
+						/>
+					</div>
+				</details>
+				<details open className="fields">
+					<summary>
+						<h2>Fields &ndash; {fields.length}</h2>
+					</summary>
 					{fields.map((field, index) => (
-						<div key={index}>
-							<div>
+						<details key={index}>
+							<summary>
+								<h3 className="text-white font-semibold mr-auto">
+									Field {index + 1} &ndash;{" "}
+									{ellipses(field.name)}
+								</h3>
 								{index !== 0 ? (
 									<button
 										onClick={() => {
@@ -165,7 +270,7 @@ export default function Home() {
 											];
 											setFields(newFields);
 										}}
-										className="mr-2 font-medium py-1 px-2 rounded transition bg-[#5865f2] hover:bg-[#4752c4] text-white"
+										className="font-medium py-1 px-2 rounded transition bg-[#5865f2] hover:bg-[#4752c4] text-white"
 									>
 										Move Up
 									</button>
@@ -183,7 +288,7 @@ export default function Home() {
 											];
 											setFields(newFields);
 										}}
-										className="mr-2 font-medium py-1 px-2 rounded transition bg-[#5865f2] hover:bg-[#4752c4] text-white"
+										className="font-medium py-1 px-2 rounded transition bg-[#5865f2] hover:bg-[#4752c4] text-white"
 									>
 										Move Down
 									</button>
@@ -194,12 +299,11 @@ export default function Home() {
 											fields.filter((_, i) => i !== index)
 										);
 									}}
-									className="mr-2 font-medium py-1 px-2 rounded transition bg-[#d83c3e] hover:bg-[#a12d2f] text-white"
+									className="font-medium py-1 px-2 rounded transition bg-[#d83c3e] hover:bg-[#a12d2f] text-white"
 								>
 									Delete
 								</button>
-								<h3>Field {index + 1}</h3>
-							</div>
+							</summary>
 							<div>
 								<label htmlFor={`field-name-${index}`}>
 									Name
@@ -250,7 +354,7 @@ export default function Home() {
 									}}
 								/>
 							</div>
-						</div>
+						</details>
 					))}
 					<button
 						type="button"
@@ -259,13 +363,13 @@ export default function Home() {
 								setFields([
 									...fields,
 									{
-										name: "",
+										name: "A New Field",
 										value: "",
 										inline: false
 									}
 								]);
 						}}
-						className={`font-medium py-1 px-2 rounded transition ${
+						className={`mt-4 font-medium py-1 px-2 rounded transition ${
 							fields.length < 25
 								? "bg-[#5865f2] hover:bg-[#4752c4] text-white "
 								: "bg-[#4f545c] cursor-not-allowed"
@@ -273,66 +377,86 @@ export default function Home() {
 					>
 						Add Field
 					</button>
-				</div>
-				<div>
-					<label htmlFor="image">Image URL</label>
-					<input
-						type="text"
-						id="image"
-						value={image}
-						onChange={e => setImage(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="thumbnail">Thumbnail URL</label>
-					<input
-						type="text"
-						id="thumbnail"
-						value={thumbnail}
-						onChange={e => setThumbnail(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="color">Color</label>
-					<input
-						type="color"
-						id="color"
-						value={color}
-						onChange={e => setColor(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="footer-text">Footer Text</label>
-					<LimitedInput
-						limit={2048}
-						type="text"
-						id="footer-text"
-						value={footerText}
-						onChange={e => setFooterText(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="footer-icon">Footer Icon</label>
-					<input
-						type="text"
-						id="footer-icon"
-						value={footerIcon}
-						onChange={e => setFooterIcon(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="timestamp">Timestamp</label>
-					<input
-						type="checkbox"
-						id="timestamp"
-						checked={!!timestamp}
-						onChange={e =>
-							setTimestamp(
-								e.target.checked ? Date.now() : undefined
-							)
-						}
-					/>
-				</div>
+				</details>
+				<details open>
+					<summary>
+						<h2>Images</h2>
+					</summary>
+					<div>
+						<label htmlFor="image">Image URL</label>
+						<input
+							type="text"
+							id="image"
+							value={image}
+							onChange={e => setImage(e.target.value)}
+						/>
+					</div>
+					<div>
+						<label htmlFor="thumbnail">Thumbnail URL</label>
+						<input
+							type="text"
+							id="thumbnail"
+							value={thumbnail}
+							onChange={e => setThumbnail(e.target.value)}
+						/>
+					</div>
+				</details>
+				<details open>
+					<summary>
+						<h2>Color</h2>
+					</summary>
+					<div>
+						<label htmlFor="color">Color</label>
+						<input
+							type="color"
+							id="color"
+							value={color}
+							onChange={e => setColor(e.target.value)}
+						/>
+					</div>
+				</details>
+				<details open>
+					<summary>
+						<h2>
+							Footer
+							{footerText ? (
+								<> &ndash; {ellipses(footerText)}</>
+							) : null}
+						</h2>
+					</summary>
+					<div>
+						<label htmlFor="footer-text">Footer Text</label>
+						<LimitedInput
+							limit={2048}
+							type="text"
+							id="footer-text"
+							value={footerText}
+							onChange={e => setFooterText(e.target.value)}
+						/>
+					</div>
+					<div>
+						<label htmlFor="footer-icon">Footer Icon</label>
+						<input
+							type="text"
+							id="footer-icon"
+							value={footerIcon}
+							onChange={e => setFooterIcon(e.target.value)}
+						/>
+					</div>
+					<div>
+						<label htmlFor="timestamp">Timestamp</label>
+						<input
+							type="checkbox"
+							id="timestamp"
+							checked={!!timestamp}
+							onChange={e =>
+								setTimestamp(
+									e.target.checked ? Date.now() : undefined
+								)
+							}
+						/>
+					</div>
+				</details>
 			</div>
 			<div className="flex-1 bg-[#36393f] p-8">
 				<DiscordEmbed embed={embed} />
