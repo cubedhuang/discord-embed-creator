@@ -18,7 +18,22 @@ export default function Home() {
 	const [url, setUrl] = useState("https://example.com");
 
 	const [description, setDescription] = useState(
-		"This is an example description."
+		`This is an example description. Markdown works too!
+
+https://automatic.links
+> Block Quotes
+\`\`\`
+Code Blocks
+\`\`\`
+*Emphasis* or _emphasis_
+\`Inline code\` or \`\`inline code\`\`
+[Links](https://example.com)
+<@123>, <@!123>, <#123>, <@&123>, @here, @everyone mentions
+||Spoilers||
+~~Strikethrough~~
+**Strong**
+__Underline__
+`
 	);
 
 	const [fields, setFields] = useState([
@@ -35,6 +50,16 @@ export default function Home() {
 		{
 			name: "The second inline field.",
 			value: "Inline fields are stacked next to each other.",
+			inline: true
+		},
+		{
+			name: "The third inline field.",
+			value: "You can have up to 3 inline fields in a row.",
+			inline: true
+		},
+		{
+			name: "Even if the next field is inline...",
+			value: "It won't stack with the previous inline fields.",
 			inline: true
 		}
 	]);

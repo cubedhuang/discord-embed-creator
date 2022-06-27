@@ -1,4 +1,5 @@
 import type { Embed, EmbedField } from "../lib/interfaces";
+import Markdown from "../lib/markdown/Markdown";
 
 export default function DiscordEmbed({ embed }: { embed: Embed }) {
 	const fieldRows: EmbedField[][] = [];
@@ -79,14 +80,14 @@ export default function DiscordEmbed({ embed }: { embed: Embed }) {
 								: "cursor-text"
 						}`}
 					>
-						{embed.title}
+						<Markdown type="header">{embed.title}</Markdown>
 					</a>
 				) : null}
 
 				{/* Description */}
 				{embed.description ? (
 					<div className="min-w-0 text-sm font-normal whitespace-pre-line col-[1/1] mt-2">
-						{embed.description}
+						<Markdown>{embed.description}</Markdown>
 					</div>
 				) : null}
 
@@ -101,12 +102,14 @@ export default function DiscordEmbed({ embed }: { embed: Embed }) {
 							>
 								{/* Field Name */}
 								<div className="min-w-0 text-white font-semibold mb-0.5">
-									{field.name}
+									<Markdown type="header">
+										{field.name}
+									</Markdown>
 								</div>
 
 								{/* Field Value */}
 								<div className="min-w-0 font-normal whitespace-pre-line">
-									{field.value}
+									<Markdown>{field.value}</Markdown>
 								</div>
 							</div>
 						))}
