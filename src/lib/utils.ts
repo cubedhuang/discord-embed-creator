@@ -19,8 +19,12 @@ function clearObjectEmpty<T extends object>(obj: T): Partial<T> {
 	return Object.entries(obj).reduce((acc, [key, value]) => {
 		key = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 		if (typeof value === "object") {
+			const cleared = clearObjectEmpty(value);
+
+			if (Object.keys(cleared).length === 0) return acc;
+
 			// @ts-expect-error
-			acc[key] = clearObjectEmpty(value);
+			acc[key] = cleared;
 		} else if (value) {
 			// @ts-expect-error
 			acc[key] =
