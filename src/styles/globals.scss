@@ -118,11 +118,10 @@
 			@apply bg-[#292b2f] mb-4 p-4 rounded;
 
 			> summary {
-				@apply flex;
+				@apply flex cursor-pointer;
 
 				h2 {
-					@apply text-white font-semibold text-lg cursor-pointer leading-none
-						flex items-center text-ellipsis overflow-hidden whitespace-nowrap
+					@apply text-white font-semibold text-lg leading-none flex items-center
 						before:w-6 before:text-xs;
 
 					&::before {
