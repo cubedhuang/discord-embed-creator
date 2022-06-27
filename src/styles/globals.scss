@@ -31,6 +31,7 @@
 
 	::-webkit-scrollbar {
 		width: 0.5rem;
+		height: 0.5rem;
 	}
 	::-webkit-scrollbar-track {
 		background: transparent;
@@ -38,6 +39,11 @@
 	::-webkit-scrollbar-thumb {
 		background: #202225;
 		border-radius: 0.5rem;
+	}
+
+	select {
+		@apply p-2 bg-[#292b2f] rounded cursor-pointer transition-colors border border-transparent
+			hover:bg-[#2f3136] focus:border-[#40444b];
 	}
 }
 

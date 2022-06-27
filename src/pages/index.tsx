@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import DiscordEmbed from "../components/DiscordEmbed";
 import LimitedInput from "../components/LimitedInput";
+import Output from "../components/Output";
 import type { Embed } from "../lib/interfaces";
-import { embedToJson } from "../lib/utils";
 
 export default function Home() {
 	const [authorIcon, setAuthorIcon] = useState("");
@@ -28,7 +28,7 @@ export default function Home() {
 		},
 		{
 			name: "Field 3",
-			value: "Because both of these fields are inline, they will be stacked next to each other.",
+			value: "Inline fields are stacked next to each other.",
 			inline: true
 		}
 	]);
@@ -337,13 +337,7 @@ export default function Home() {
 			<div className="flex-1 bg-[#36393f] p-8">
 				<DiscordEmbed embed={embed} />
 
-				<div className="mt-8">
-					<h2 className="text-xl font-semibold text-white">Output</h2>
-
-					<pre className="bg-[#292b2f] p-2 text-sm rounded whitespace-pre-wrap">
-						{embedToJson(embed)}
-					</pre>
-				</div>
+				<Output embed={embed} />
 			</div>
 		</div>
 	);
