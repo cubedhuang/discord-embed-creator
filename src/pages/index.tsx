@@ -526,40 +526,44 @@ __Underline__
 							embed.
 						</p>
 
-						<div className="flex flex-col gap-2 items-start">
-							<Copier
-								getContent={async () => {
-									const { id } = await fetch("/api/save", {
-										body: JSON.stringify({ embed }),
-										method: "POST",
-										headers: {
-											"Content-Type": "application/json"
-										}
-									}).then(res => res.json());
+						<p className="mb-1">
+							The short link will be valid for one week.
+						</p>
 
-									return `${location.origin}/?id=${id}`;
-								}}
-								className={button()}
-								copiedClassName={button("disabled")}
-								timeout={30000}
-							>
-								Copy Shareable Link
-							</Copier>
+						<Copier
+							getContent={async () => {
+								const { id } = await fetch("/api/save", {
+									body: JSON.stringify({ embed }),
+									method: "POST",
+									headers: {
+										"Content-Type": "application/json"
+									}
+								}).then(res => res.json());
 
-							<Copier
-								getContent={() =>
-									`${
-										location.origin
-									}/?data=${encodeURIComponent(
-										btoa(JSON.stringify(embed))
-									)}`
-								}
-								className={button()}
-								copiedClassName={button("disabled")}
-							>
-								Copy Permanent Link
-							</Copier>
-						</div>
+								return `${location.origin}/?id=${id}`;
+							}}
+							className={button()}
+							copiedClassName={button("disabled")}
+							timeout={30000}
+						>
+							Copy Short Link
+						</Copier>
+
+						<p className="mt-2 mb-1">
+							The permanent link contains all of your embed data.
+						</p>
+
+						<Copier
+							getContent={() =>
+								`${location.origin}/?data=${encodeURIComponent(
+									btoa(JSON.stringify(embed))
+								)}`
+							}
+							className={button()}
+							copiedClassName={button("disabled")}
+						>
+							Copy Permanent Link
+						</Copier>
 					</div>
 				</>
 			) : null}
