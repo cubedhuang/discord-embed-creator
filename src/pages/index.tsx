@@ -209,6 +209,8 @@ __Underline__
 						</h1>
 						<a
 							href="https://github.com/cubedhuang/discord-embed-creator"
+							target="_blank"
+							rel="noopener noreferrer"
 							className="hover:underline"
 						>
 							GitHub
