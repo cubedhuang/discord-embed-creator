@@ -5,6 +5,7 @@ import Copier from "../components/Copier";
 import DiscordEmbed from "../components/DiscordEmbed";
 import LimitedInput from "../components/LimitedInput";
 import Output from "../components/Output";
+import ValueInput from "../components/ValueInput";
 import type { Embed } from "../lib/interfaces";
 
 function ellipses(str: string, max = 50) {
@@ -279,79 +280,46 @@ __Underline__
 							) : null}
 						</h2>
 					</summary>
-					<div>
-						<label htmlFor="author-name">Author Name</label>
-						<LimitedInput
-							limit={256}
-							type="text"
-							id="author-name"
-							value={authorName}
-							onChange={e => setAuthorName(e.target.value)}
-						/>
-					</div>
-					<div>
-						<label htmlFor="author-url">Author URL</label>
-						<input
-							type="text"
-							id="author-url"
-							value={authorUrl}
-							onChange={e => setAuthorUrl(e.target.value)}
-						/>
-					</div>
-					<div>
-						<label htmlFor="author-icon">Author Icon URL</label>
-						<input
-							type="text"
-							id="author-icon"
-							value={authorIcon}
-							onChange={e => setAuthorIcon(e.target.value)}
-						/>
-					</div>
+					<ValueInput
+						label="Author Name"
+						value={[authorName, setAuthorName]}
+						limit={256}
+					/>
+					<ValueInput
+						label="Author URL"
+						value={[authorUrl, setAuthorUrl]}
+					/>
+					<ValueInput
+						label="Author Icon URL"
+						value={[authorIcon, setAuthorIcon]}
+					/>
 				</details>
 				<details open>
 					<summary>
 						<h2>
-							Title
+							Body
 							{title ? <> &ndash; {ellipses(title)}</> : null}
 						</h2>
 					</summary>
+					<ValueInput
+						label="Title"
+						value={[title, setTitle]}
+						limit={256}
+					/>
+					<ValueInput label="Title URL" value={[url, setUrl]} />
+					<ValueInput
+						label="Description"
+						value={[description, setDescription]}
+						limit={4096}
+						textarea={true}
+					/>
 					<div>
-						<label htmlFor="title">Title</label>
-						<LimitedInput
-							limit={256}
-							type="text"
-							id="title"
-							value={title}
-							onChange={e => setTitle(e.target.value)}
-						/>
-					</div>
-					<div>
-						<label htmlFor="url">Title URL</label>
+						<label htmlFor="color">Color</label>
 						<input
-							type="text"
-							id="url"
-							value={url}
-							onChange={e => setUrl(e.target.value)}
-						/>
-					</div>
-				</details>
-				<details open>
-					<summary>
-						<h2>
-							Description
-							{description ? (
-								<> &ndash; {ellipses(description)}</>
-							) : null}
-						</h2>
-					</summary>
-					<div>
-						<label htmlFor="description">Description</label>
-						<LimitedInput
-							limit={4096}
-							textarea={true}
-							id="description"
-							value={description}
-							onChange={e => setDescription(e.target.value)}
+							type="color"
+							id="color"
+							value={color}
+							onChange={e => setColor(e.target.value)}
 						/>
 					</div>
 				</details>
@@ -493,38 +461,11 @@ __Underline__
 					<summary>
 						<h2>Images</h2>
 					</summary>
-					<div>
-						<label htmlFor="image">Image URL</label>
-						<input
-							type="text"
-							id="image"
-							value={image}
-							onChange={e => setImage(e.target.value)}
-						/>
-					</div>
-					<div>
-						<label htmlFor="thumbnail">Thumbnail URL</label>
-						<input
-							type="text"
-							id="thumbnail"
-							value={thumbnail}
-							onChange={e => setThumbnail(e.target.value)}
-						/>
-					</div>
-				</details>
-				<details open>
-					<summary>
-						<h2>Color</h2>
-					</summary>
-					<div>
-						<label htmlFor="color">Color</label>
-						<input
-							type="color"
-							id="color"
-							value={color}
-							onChange={e => setColor(e.target.value)}
-						/>
-					</div>
+					<ValueInput label="Image URL" value={[image, setImage]} />
+					<ValueInput
+						label="Thumbnail URL"
+						value={[thumbnail, setThumbnail]}
+					/>
 				</details>
 				<details open>
 					<summary>
@@ -535,25 +476,15 @@ __Underline__
 							) : null}
 						</h2>
 					</summary>
-					<div>
-						<label htmlFor="footer-text">Footer Text</label>
-						<LimitedInput
-							limit={2048}
-							type="text"
-							id="footer-text"
-							value={footerText}
-							onChange={e => setFooterText(e.target.value)}
-						/>
-					</div>
-					<div>
-						<label htmlFor="footer-icon">Footer Icon</label>
-						<input
-							type="text"
-							id="footer-icon"
-							value={footerIcon}
-							onChange={e => setFooterIcon(e.target.value)}
-						/>
-					</div>
+					<ValueInput
+						label="Footer Text"
+						value={[footerText, setFooterText]}
+						limit={2048}
+					/>
+					<ValueInput
+						label="Footer Icon URL"
+						value={[footerIcon, setFooterIcon]}
+					/>
 					<div>
 						<label htmlFor="timestamp">Timestamp</label>
 						<input
