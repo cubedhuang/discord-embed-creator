@@ -40,6 +40,14 @@
 		background: #202225;
 		border-radius: 0.5rem;
 	}
+	::-webkit-scrollbar-corner {
+		background: transparent;
+	}
+
+	::-webkit-resizer {
+		border-radius: 0.5rem;
+		background: #202225;
+	}
 
 	select {
 		@apply p-2 bg-[#292b2f] rounded cursor-pointer transition-colors border border-transparent
