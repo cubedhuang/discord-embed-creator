@@ -356,42 +356,46 @@ __Underline__
 									Field {index + 1} &ndash;{" "}
 									{ellipses(field.name)}
 								</h3>
-								{index !== 0 ? (
-									<button
-										onClick={() => {
-											const newFields = [...fields];
-											[
-												newFields[index - 1],
-												newFields[index]
-											] = [
-												newFields[index],
-												newFields[index - 1]
-											];
-											setFields(newFields);
-										}}
-										className={button()}
-									>
-										Move Up
-									</button>
-								) : null}
-								{index !== fields.length - 1 ? (
-									<button
-										onClick={() => {
-											const newFields = [...fields];
-											[
-												newFields[index + 1],
-												newFields[index]
-											] = [
-												newFields[index],
-												newFields[index + 1]
-											];
-											setFields(newFields);
-										}}
-										className={button()}
-									>
-										Move Down
-									</button>
-								) : null}
+								<button
+									onClick={() => {
+										if (index === 0) return;
+										const newFields = [...fields];
+										[
+											newFields[index - 1],
+											newFields[index]
+										] = [
+											newFields[index],
+											newFields[index - 1]
+										];
+										setFields(newFields);
+									}}
+									className={button(
+										index === 0 ? "disabled" : "blue"
+									)}
+								>
+									Move Up
+								</button>
+								<button
+									onClick={() => {
+										if (index === fields.length - 1) return;
+										const newFields = [...fields];
+										[
+											newFields[index + 1],
+											newFields[index]
+										] = [
+											newFields[index],
+											newFields[index + 1]
+										];
+										setFields(newFields);
+									}}
+									className={button(
+										index === fields.length - 1
+											? "disabled"
+											: "blue"
+									)}
+								>
+									Move Down
+								</button>
 								<button
 									onClick={() => {
 										setFields(
