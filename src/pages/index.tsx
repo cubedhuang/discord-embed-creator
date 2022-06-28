@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
+import Copier from "../components/Copier";
 import DiscordEmbed from "../components/DiscordEmbed";
 import LimitedInput from "../components/LimitedInput";
 import Output from "../components/Output";
@@ -7,6 +9,16 @@ import type { Embed } from "../lib/interfaces";
 
 function ellipses(str: string, max = 32) {
 	return str.length > max ? `${str.slice(0, max - 3)}...` : str;
+}
+
+function button(type: "blue" | "red" | "disabled" = "blue") {
+	return `font-medium py-1 px-2 rounded transition ${
+		type === "blue"
+			? "bg-[#5865f2] hover:bg-[#4752c4] text-white"
+			: type === "red"
+			? "bg-[#d83c3e] hover:bg-[#a12d2f] text-white"
+			: "bg-[#4f545c] cursor-not-allowed"
+	}`;
 }
 
 export default function Home() {
@@ -80,6 +92,68 @@ __Underline__
 
 	const [timestamp, setTimestamp] = useState<number | undefined>(undefined);
 
+	const [error, setError] = useState<string | undefined>(undefined);
+
+	const [modal, setModal] = useState(false);
+
+	const router = useRouter();
+
+	useEffect(() => {
+		const { save: embedQuery } = router.query;
+
+		if (!embedQuery) return;
+
+		router.push("/", "/", { shallow: true });
+
+		const embedString = Array.isArray(embedQuery)
+			? embedQuery[0]
+			: embedQuery;
+
+		try {
+			const embed = JSON.parse(atob(embedString));
+
+			setAuthorIcon(embed.author?.icon_url ?? "");
+			setAuthorName(embed.author?.name ?? "");
+			setAuthorUrl(embed.author?.url ?? "");
+
+			setTitle(embed.title ?? "");
+			setUrl(embed.url ?? "");
+			setDescription(embed.description ?? "");
+
+			setFields(embed.fields ?? []);
+
+			setImage(embed.image?.url ?? "");
+			setThumbnail(embed.thumbnail?.url ?? "");
+
+			setColor(embed.color);
+
+			setFooterText(embed.footer?.text ?? "");
+			setFooterIcon(embed.footer?.icon_url ?? "");
+
+			setTimestamp(embed.timestamp);
+		} catch (e) {
+			setError("Invalid imported embed!");
+		}
+	}, [router]);
+
+	useEffect(() => {
+		if (
+			title.length +
+				description.length +
+				fields.reduce(
+					(acc, cur) => acc + cur.name.length + cur.value.length,
+					0
+				) +
+				footerText.length +
+				authorName.length >
+			6000
+		) {
+			setError(
+				"The total number of characters in the embed content must not exceed 6000!"
+			);
+		}
+	}, [title, description, fields, footerText, authorName]);
+
 	const embed: Embed = {
 		author: {
 			name: authorName.trim(),
@@ -138,7 +212,7 @@ __Underline__
 								setFooterIcon("");
 								setTimestamp(undefined);
 							}}
-							className="font-medium py-1 px-2 rounded transition bg-[#d83c3e] hover:bg-[#a12d2f] text-white"
+							className={button("red")}
 						>
 							Clear All
 						</button>
@@ -152,7 +226,7 @@ __Underline__
 									details.open = true;
 								}
 							}}
-							className="font-medium py-1 px-2 rounded transition bg-[#5865f2] hover:bg-[#4752c4] text-white"
+							className={button()}
 						>
 							Expand All
 						</button>
@@ -165,27 +239,27 @@ __Underline__
 									details.open = false;
 								}
 							}}
-							className="font-medium py-1 px-2 rounded transition bg-[#5865f2] hover:bg-[#4752c4] text-white"
+							className={button()}
 						>
 							Collapse All
+						</button>
+
+						<button
+							type="button"
+							onClick={() => setModal(true)}
+							className={button()}
+						>
+							Share Your Embed
 						</button>
 					</div>
 				</div>
 
-				{title.length +
-					description.length +
-					fields.reduce(
-						(acc, cur) => acc + cur.name.length + cur.value.length,
-						0
-					) +
-					footerText.length +
-					authorName.length >
-				6000 ? (
-					<div className="w-fit ml-auto px-4 py-2 rounded bg-[#d83c3e] font-semibold text-white">
-						The total number of characters in the embed content must
-						not exceed 6000!
+				{error ? (
+					<div className="px-4 py-2 rounded bg-[#d83c3e] font-semibold text-white">
+						{error}
 					</div>
 				) : null}
+
 				<details open>
 					<summary>
 						<h2>
@@ -295,7 +369,7 @@ __Underline__
 											];
 											setFields(newFields);
 										}}
-										className="font-medium py-1 px-2 rounded transition bg-[#5865f2] hover:bg-[#4752c4] text-white"
+										className={button()}
 									>
 										Move Up
 									</button>
@@ -313,7 +387,7 @@ __Underline__
 											];
 											setFields(newFields);
 										}}
-										className="font-medium py-1 px-2 rounded transition bg-[#5865f2] hover:bg-[#4752c4] text-white"
+										className={button()}
 									>
 										Move Down
 									</button>
@@ -324,7 +398,7 @@ __Underline__
 											fields.filter((_, i) => i !== index)
 										);
 									}}
-									className="font-medium py-1 px-2 rounded transition bg-[#d83c3e] hover:bg-[#a12d2f] text-white"
+									className={button("red")}
 								>
 									Delete
 								</button>
@@ -394,11 +468,9 @@ __Underline__
 									}
 								]);
 						}}
-						className={`mt-4 font-medium py-1 px-2 rounded transition ${
-							fields.length < 25
-								? "bg-[#5865f2] hover:bg-[#4752c4] text-white "
-								: "bg-[#4f545c] cursor-not-allowed"
-						}`}
+						className={`mt-4 ${button(
+							fields.length < 25 ? "blue" : "disabled"
+						)}`}
 					>
 						Add Field
 					</button>
@@ -488,6 +560,37 @@ __Underline__
 
 				<Output embed={embed} />
 			</div>
+			{modal ? (
+				<>
+					<div
+						className="fixed top-0 left-0 right-0 bottom-0 bg-black opacity-50"
+						onClick={() => setModal(false)}
+					/>
+
+					<div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#292b2f] p-4 rounded">
+						<h2 className="text-white text-xl font-semibold">
+							Share Your Embed
+						</h2>
+
+						<p className="mb-2">
+							Click the button below to copy a link to share your
+							embed.
+						</p>
+
+						<Copier
+							getContent={() =>
+								`${location.origin}/?save=${encodeURIComponent(
+									btoa(JSON.stringify(embed))
+								)}`
+							}
+							className={button()}
+							copiedClassName={button("disabled")}
+						>
+							Copy Permanent Link
+						</Copier>
+					</div>
+				</>
+			) : null}
 		</div>
 	);
 }
