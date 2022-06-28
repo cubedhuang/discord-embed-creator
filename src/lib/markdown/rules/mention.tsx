@@ -33,7 +33,11 @@ export const mention: MarkdownRule = {
 	react: (node, output, state) => (
 		<span
 			key={state.key}
-			className="rounded-[3px] px-0.5 cursor-pointer font-medium transition-colors duration-[50ms] bg-[#5f64f2] bg-opacity-30 hover:bg-opacity-100 text-[#dee0fc] hover:text-white"
+			className={`rounded-[3px] px-0.5 font-medium transition-colors duration-[50ms] bg-[#5f64f2] bg-opacity-30  text-[#dee0fc]  ${
+				node.content === "@everyone" || node.content === "@here"
+					? ""
+					: "cursor-pointer hover:bg-opacity-100 hover:text-white"
+			}`}
 		>
 			{node.content}
 		</span>
