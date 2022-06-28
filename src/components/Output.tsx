@@ -205,7 +205,7 @@ export default function Output({ embed }: { embed: Embed }) {
 
 			<Highlight
 				language={language === "json" ? "js" : language}
-				className="rounded"
+				className="rounded text-sm"
 			>
 				{output}
 			</Highlight>
