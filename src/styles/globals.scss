@@ -51,7 +51,7 @@
 
 	select {
 		@apply p-2 bg-[#292b2f] rounded cursor-pointer transition-colors border border-transparent
-			hover:bg-[#2f3136] focus:border-[#40444b] focus:outline-none;
+			hover:border-[#40444b] focus:border-[#40444b] focus:outline-none;
 	}
 
 	::-webkit-color-swatch-wrapper {
