@@ -7,7 +7,7 @@ import LimitedInput from "../components/LimitedInput";
 import Output from "../components/Output";
 import type { Embed } from "../lib/interfaces";
 
-function ellipses(str: string, max = 32) {
+function ellipses(str: string, max = 50) {
 	return str.length > max ? `${str.slice(0, max - 3)}...` : str;
 }
 
@@ -19,6 +19,14 @@ function button(type: "blue" | "red" | "disabled" = "blue") {
 			? "bg-[#d83c3e] hover:bg-[#a12d2f] text-white"
 			: "bg-[#4f545c] cursor-not-allowed"
 	}`;
+}
+
+function setAllDetails(open: boolean) {
+	for (const details of Array.from(
+		document.getElementsByTagName("details")
+	)) {
+		details.open = false;
+	}
 }
 
 export default function Home() {
@@ -210,6 +218,7 @@ __Underline__
 						<button
 							type="button"
 							onClick={() => {
+								setAllDetails(false);
 								setAuthorName("");
 								setAuthorIcon("");
 								setAuthorUrl("");
@@ -232,26 +241,14 @@ __Underline__
 
 						<button
 							type="button"
-							onClick={() => {
-								for (const details of Array.from(
-									document.getElementsByTagName("details")
-								)) {
-									details.open = true;
-								}
-							}}
+							onClick={() => setAllDetails(true)}
 							className={button()}
 						>
 							Expand All
 						</button>
 						<button
 							type="button"
-							onClick={() => {
-								for (const details of Array.from(
-									document.getElementsByTagName("details")
-								)) {
-									details.open = false;
-								}
-							}}
+							onClick={() => setAllDetails(false)}
 							className={button()}
 						>
 							Collapse All
