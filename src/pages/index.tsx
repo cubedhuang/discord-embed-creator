@@ -132,7 +132,7 @@ __Underline__
 
 				router.push("/", "/", { shallow: true });
 
-				setAuthorIcon(embed.author?.icon_url ?? "");
+				setAuthorIcon(embed.author?.iconUrl ?? "");
 				setAuthorName(embed.author?.name ?? "");
 				setAuthorUrl(embed.author?.url ?? "");
 
@@ -148,7 +148,7 @@ __Underline__
 				setColor(embed.color);
 
 				setFooterText(embed.footer?.text ?? "");
-				setFooterIcon(embed.footer?.icon_url ?? "");
+				setFooterIcon(embed.footer?.iconUrl ?? "");
 
 				setTimestamp(embed.timestamp);
 			} catch (e) {
