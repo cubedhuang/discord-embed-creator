@@ -99,41 +99,53 @@ __Underline__
 	const router = useRouter();
 
 	useEffect(() => {
-		const { save: embedQuery } = router.query;
+		(async () => {
+			const { data, id } = router.query;
 
-		if (!embedQuery) return;
+			try {
+				let embed: any;
 
-		router.push("/", "/", { shallow: true });
+				if (id) {
+					embed = await fetch(`/api/load?id=${id}`)
+						.then(res => res.json())
+						.then(res => res.embed);
 
-		const embedString = Array.isArray(embedQuery)
-			? embedQuery[0]
-			: embedQuery;
+					if (!embed) {
+						throw new Error("No embed found.");
+					}
+				} else if (data) {
+					const embedString = Array.isArray(data) ? data[0] : data;
 
-		try {
-			const embed = JSON.parse(atob(embedString));
+					embed = JSON.parse(atob(embedString));
+				}
 
-			setAuthorIcon(embed.author?.icon_url ?? "");
-			setAuthorName(embed.author?.name ?? "");
-			setAuthorUrl(embed.author?.url ?? "");
+				if (!embed) return;
 
-			setTitle(embed.title ?? "");
-			setUrl(embed.url ?? "");
-			setDescription(embed.description ?? "");
+				router.push("/", "/", { shallow: true });
 
-			setFields(embed.fields ?? []);
+				setAuthorIcon(embed.author?.icon_url ?? "");
+				setAuthorName(embed.author?.name ?? "");
+				setAuthorUrl(embed.author?.url ?? "");
 
-			setImage(embed.image?.url ?? "");
-			setThumbnail(embed.thumbnail?.url ?? "");
+				setTitle(embed.title ?? "");
+				setUrl(embed.url ?? "");
+				setDescription(embed.description ?? "");
 
-			setColor(embed.color);
+				setFields(embed.fields ?? []);
 
-			setFooterText(embed.footer?.text ?? "");
-			setFooterIcon(embed.footer?.icon_url ?? "");
+				setImage(embed.image?.url ?? "");
+				setThumbnail(embed.thumbnail?.url ?? "");
 
-			setTimestamp(embed.timestamp);
-		} catch (e) {
-			setError("Invalid imported embed!");
-		}
+				setColor(embed.color);
+
+				setFooterText(embed.footer?.text ?? "");
+				setFooterIcon(embed.footer?.icon_url ?? "");
+
+				setTimestamp(embed.timestamp);
+			} catch (e) {
+				setError("Invalid imported embed!");
+			}
+		})();
 	}, [router]);
 
 	useEffect(() => {
@@ -211,6 +223,7 @@ __Underline__
 								setFooterText("");
 								setFooterIcon("");
 								setTimestamp(undefined);
+								setError(undefined);
 							}}
 							className={button("red")}
 						>
@@ -559,11 +572,13 @@ __Underline__
 					</div>
 				</details>
 			</div>
+
 			<div className="flex-1 bg-[#36393f] p-8">
 				<DiscordEmbed embed={embed} />
 
 				<Output embed={embed} />
 			</div>
+
 			{modal ? (
 				<>
 					<div
@@ -581,17 +596,40 @@ __Underline__
 							embed.
 						</p>
 
-						<Copier
-							getContent={() =>
-								`${location.origin}/?save=${encodeURIComponent(
-									btoa(JSON.stringify(embed))
-								)}`
-							}
-							className={button()}
-							copiedClassName={button("disabled")}
-						>
-							Copy Permanent Link
-						</Copier>
+						<div className="flex flex-col gap-2 items-start">
+							<Copier
+								getContent={async () => {
+									const { id } = await fetch("/api/save", {
+										body: JSON.stringify({ embed }),
+										method: "POST",
+										headers: {
+											"Content-Type": "application/json"
+										}
+									}).then(res => res.json());
+
+									return `${location.origin}/?id=${id}`;
+								}}
+								className={button()}
+								copiedClassName={button("disabled")}
+								timeout={30000}
+							>
+								Copy Shareable Link
+							</Copier>
+
+							<Copier
+								getContent={() =>
+									`${
+										location.origin
+									}/?data=${encodeURIComponent(
+										btoa(JSON.stringify(embed))
+									)}`
+								}
+								className={button()}
+								copiedClassName={button("disabled")}
+							>
+								Copy Permanent Link
+							</Copier>
+						</div>
 					</div>
 				</>
 			) : null}

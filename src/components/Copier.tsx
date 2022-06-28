@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 export default function Copier({
 	getContent,
 	children,
+	timeout = 2000,
 	className,
 	copiedClassName
 }: {
-	getContent: () => string;
+	getContent: () => string | Promise<string>;
 	children?: React.ReactNode;
+	timeout?: number;
 	className?: string;
 	copiedClassName?: string;
 }) {
@@ -18,7 +20,7 @@ export default function Copier({
 
 		const id = setTimeout(() => {
 			setCopied(false);
-		}, 2000);
+		}, timeout);
 
 		return () => clearTimeout(id);
 	}, [copied]);
@@ -26,8 +28,9 @@ export default function Copier({
 	return (
 		<button
 			type="button"
-			onClick={() => {
-				navigator.clipboard.writeText(getContent());
+			onClick={async () => {
+				if (copied) return;
+				navigator.clipboard.writeText(await getContent());
 				setCopied(true);
 			}}
 			className={copied ? copiedClassName : className}
