@@ -26,7 +26,7 @@ function setAllDetails(open: boolean) {
 	for (const details of Array.from(
 		document.getElementsByTagName("details")
 	)) {
-		details.open = false;
+		details.open = open;
 	}
 }
 
