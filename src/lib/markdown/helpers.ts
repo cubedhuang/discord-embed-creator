@@ -69,19 +69,12 @@ export const parseUrl: ParseFunction = capture => {
 	};
 };
 
-export function createParser(
-	rules: Record<string, MarkdownRule>,
-	transform?: (ast: SingleASTNode[]) => SingleASTNode[]
-) {
+export function createParser(rules: Record<string, MarkdownRule>) {
 	const parse = parserFor(rules, { inline: true });
 	const output = outputFor(rules, "react");
 
 	return (content: string) => {
 		let ast = parse(content);
-
-		if (transform) {
-			ast = transform(ast);
-		}
 
 		return output(ast);
 	};
