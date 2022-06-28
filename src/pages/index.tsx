@@ -71,7 +71,7 @@ __Underline__
 		"https://dan.onl/images/emptysong.jpg"
 	);
 
-	const [color, setColor] = useState<string | undefined>("#202225");
+	const [color, setColor] = useState<string | undefined>("#00b0f4");
 
 	const [footerText, setFooterText] = useState("Example footer!");
 	const [footerIcon, setFooterIcon] = useState(
