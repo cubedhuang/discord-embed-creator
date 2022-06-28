@@ -7,6 +7,7 @@ import LimitedInput from "../components/LimitedInput";
 import Output from "../components/Output";
 import ValueInput from "../components/ValueInput";
 import { Embed, EmbedField } from "../lib/interfaces";
+import { embedToPartial } from "../lib/utils";
 
 function ellipses(str: string, max = 50) {
 	return str.length > max ? `${str.slice(0, max - 3)}...` : str;
@@ -575,7 +576,9 @@ export default function Home() {
 						<Copier
 							getContent={async () => {
 								const { id } = await fetch("/api/save", {
-									body: JSON.stringify({ embed }),
+									body: JSON.stringify({
+										embed: embedToPartial(embed)
+									}),
 									method: "POST",
 									headers: {
 										"Content-Type": "application/json"
@@ -602,7 +605,7 @@ export default function Home() {
 						<Copier
 							getContent={() =>
 								`${location.origin}/?data=${encodeURIComponent(
-									btoa(JSON.stringify(embed))
+									btoa(JSON.stringify(embedToPartial(embed)))
 								)}`
 							}
 							idleClassName={button()}

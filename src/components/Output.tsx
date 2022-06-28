@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import type { Embed } from "../lib/interfaces";
-import { embedToJson } from "../lib/utils";
+import { embedToObjectCode } from "../lib/utils";
 import Highlight from "./Highlight";
 
 function s(strings: TemplateStringsArray, ...values: string[]) {
@@ -25,7 +25,7 @@ export default function Output({ embed }: { embed: Embed }) {
 	let output = "";
 
 	if (language === "json") {
-		output = embedToJson(embed, false);
+		output = embedToObjectCode(embed, false);
 	} else if (language === "js") {
 		if (jsMode !== "object") {
 			output += `const embed = new ${
@@ -98,7 +98,7 @@ export default function Output({ embed }: { embed: Embed }) {
 			}] });`;
 		} else {
 			output += `await message.reply({\n`;
-			output += `  embeds: [${embedToJson(embed).replaceAll(
+			output += `  embeds: [${embedToObjectCode(embed).replaceAll(
 				"\n",
 				"\n  "
 			)}]\n`;

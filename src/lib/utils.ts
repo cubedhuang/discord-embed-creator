@@ -1,25 +1,36 @@
 import type { Embed } from "./interfaces";
 
-export function embedToJson(embed: Embed, removeKeyQuotes = true): string {
-	const output = JSON.stringify(clearObjectEmpty(embed), null, 2);
+export function embedToPartial(embed: Embed): Partial<Embed> {
+	return clearEmptySlots(embed);
+}
+
+export function embedToObjectCode(
+	embed: Embed,
+	removeKeyQuotes = true
+): string {
+	const output = JSON.stringify(clearEmptySlots(embed, true), null, 2);
 	if (!removeKeyQuotes) return output;
 	return output.replace(/(\n\s*)"(\w+)":/g, "$1$2:");
 }
 
-function clearObjectEmpty<T extends object>(obj: T): Partial<T> {
+function clearEmptySlots<T extends object>(
+	obj: T,
+	objectCode = false
+): Partial<T> {
 	if (obj === null || obj === undefined) {
 		return obj;
 	}
 
 	if (Array.isArray(obj)) {
 		// @ts-expect-error
-		return obj.map(clearObjectEmpty);
+		return obj.map(clearEmptySlots);
 	}
 
 	return Object.entries(obj).reduce((acc, [key, value]) => {
-		key = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+		if (objectCode)
+			key = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 		if (typeof value === "object") {
-			const cleared = clearObjectEmpty(value);
+			const cleared = clearEmptySlots(value);
 
 			if (Object.keys(cleared).length === 0) return acc;
 
@@ -27,8 +38,11 @@ function clearObjectEmpty<T extends object>(obj: T): Partial<T> {
 			acc[key] = cleared;
 		} else if (value) {
 			// @ts-expect-error
-			acc[key] =
-				key === "image" || key === "thumbnail" ? { url: value } : value;
+			acc[key] = objectCode
+				? key === "image" || key === "thumbnail"
+					? { url: value }
+					: value
+				: value;
 		}
 		return acc;
 	}, {});
