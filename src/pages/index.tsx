@@ -586,8 +586,12 @@ export default function Home() {
 
 								return `${location.origin}/?id=${id}`;
 							}}
-							className={button()}
+							idleClassName={button()}
+							loadingClassName={`${button(
+								"disabled"
+							)} animate-pulse`}
 							copiedClassName={button("disabled")}
+							errorClassName={button("disabled")}
 							timeout={30000}
 						>
 							Copy Short Link
@@ -603,7 +607,7 @@ export default function Home() {
 									btoa(JSON.stringify(embed))
 								)}`
 							}
-							className={button()}
+							idleClassName={button()}
 							copiedClassName={button("disabled")}
 						>
 							Copy Permanent Link

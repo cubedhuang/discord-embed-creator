@@ -1,41 +1,78 @@
 import { useEffect, useState } from "react";
 
+const enum CopierState {
+	Idle,
+	Loading,
+	Copied,
+	Error
+}
+
 export default function Copier({
 	getContent,
 	children,
 	timeout = 2000,
 	className,
-	copiedClassName
+	idleClassName,
+	loadingClassName,
+	copiedClassName,
+	errorClassName
 }: {
 	getContent: () => string | Promise<string>;
 	children?: React.ReactNode;
 	timeout?: number;
 	className?: string;
+	idleClassName?: string;
+	loadingClassName?: string;
 	copiedClassName?: string;
+	errorClassName?: string;
 }) {
-	const [copied, setCopied] = useState(false);
+	const [state, setState] = useState(CopierState.Idle);
 
 	useEffect(() => {
-		if (!copied) return;
+		if (state !== CopierState.Copied) return;
 
 		const id = setTimeout(() => {
-			setCopied(false);
+			setState(CopierState.Idle);
 		}, timeout);
 
 		return () => clearTimeout(id);
-	}, [copied]);
+	}, [state]);
 
 	return (
 		<button
 			type="button"
 			onClick={async () => {
-				if (copied) return;
-				navigator.clipboard.writeText(await getContent());
-				setCopied(true);
+				if (state !== CopierState.Idle) return;
+
+				const content = getContent();
+
+				if (typeof content === "string") {
+					navigator.clipboard.writeText(content);
+					setState(CopierState.Copied);
+					return;
+				}
+
+				setState(CopierState.Loading);
+				navigator.clipboard.writeText(await content);
+				setState(CopierState.Copied);
 			}}
-			className={copied ? copiedClassName : className}
+			className={`${className} ${
+				state === CopierState.Idle
+					? idleClassName
+					: state === CopierState.Loading
+					? loadingClassName
+					: state === CopierState.Copied
+					? copiedClassName
+					: errorClassName
+			}`}
 		>
-			{copied ? "Copied!" : children}
+			{state === CopierState.Idle
+				? children
+				: state === CopierState.Loading
+				? "Loading..."
+				: state === CopierState.Copied
+				? "Copied!"
+				: "An error occurred."}
 		</button>
 	);
 }
