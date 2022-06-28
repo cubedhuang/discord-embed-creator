@@ -98,7 +98,8 @@ export default function Home() {
 	const [title, setTitle] = useState("");
 	const [url, setUrl] = useState("");
 	const [description, setDescription] = useState("");
-	const [color, setColor] = useState<string | undefined>("#202225");
+	const [color, setColor] = useState("#202225");
+	const [colorEnabled, setColorEnabled] = useState(true);
 
 	const [fields, setFields] = useState<EmbedField[]>([]);
 
@@ -187,7 +188,8 @@ export default function Home() {
 		setImage(embed.image ?? "");
 		setThumbnail(embed.thumbnail ?? "");
 
-		setColor(embed.color);
+		if (embed.color) setColor(embed.color);
+		setColorEnabled(embed.color !== undefined);
 
 		setFooterText(embed.footer?.text ?? "");
 		setFooterIcon(embed.footer?.iconUrl ?? "");
@@ -213,7 +215,7 @@ export default function Home() {
 		})),
 		image: image.trim(),
 		thumbnail: thumbnail.trim(),
-		color,
+		color: colorEnabled ? color : undefined,
 		footer: {
 			text: footerText.trim(),
 			iconUrl: footerIcon.trim()
@@ -253,7 +255,7 @@ export default function Home() {
 								setFields([]);
 								setImage("");
 								setThumbnail("");
-								setColor(undefined);
+								setColorEnabled(false);
 								setFooterText("");
 								setFooterIcon("");
 								setTimestamp(undefined);
@@ -344,7 +346,7 @@ export default function Home() {
 							id="color"
 							value={color}
 							onChange={e => setColor(e.target.value)}
-							disabled={!color}
+							disabled={!colorEnabled}
 							className="mt-2"
 						/>
 						<label
@@ -355,14 +357,10 @@ export default function Home() {
 						</label>
 						<input
 							type="checkbox"
-							checked={color ? true : false}
+							checked={colorEnabled}
 							id="color-enabled"
 							value={color}
-							onChange={e =>
-								setColor(
-									e.target.checked ? "#202225" : undefined
-								)
-							}
+							onChange={e => setColorEnabled(!colorEnabled)}
 							className="mt-2"
 						/>
 					</div>
