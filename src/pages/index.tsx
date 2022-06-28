@@ -213,7 +213,7 @@ export default function Home() {
 		})),
 		image: image.trim(),
 		thumbnail: thumbnail.trim(),
-		color: color?.trim(),
+		color,
 		footer: {
 			text: footerText.trim(),
 			iconUrl: footerIcon.trim()
@@ -337,26 +337,34 @@ export default function Home() {
 						limit={4096}
 						textarea={true}
 					/>
-					<div>
+					<div className="flex items-center gap-2">
 						<label htmlFor="color">Color</label>
-						<div className="flex items-center gap-2">
-							<input
-								type="color"
-								id="color"
-								value={color}
-								onChange={e => setColor(e.target.value)}
-								disabled={!color}
-							/>
-							<input
-								type="checkbox"
-								checked={color ? true : false}
-								onChange={e =>
-									setColor(
-										e.target.checked ? "#202225" : undefined
-									)
-								}
-							/>
-						</div>
+						<input
+							type="color"
+							id="color"
+							value={color}
+							onChange={e => setColor(e.target.value)}
+							disabled={!color}
+							className="mt-2"
+						/>
+						<label
+							htmlFor="color-enabled"
+							className="text-sm text-white ml-2"
+						>
+							Enabled?
+						</label>
+						<input
+							type="checkbox"
+							checked={color ? true : false}
+							id="color-enabled"
+							value={color}
+							onChange={e =>
+								setColor(
+									e.target.checked ? "#202225" : undefined
+								)
+							}
+							className="mt-2"
+						/>
 					</div>
 				</details>
 				<details open className="fields">
@@ -455,7 +463,7 @@ export default function Home() {
 									}}
 								/>
 							</div>
-							<div>
+							<div className="flex items-center justify-start gap-2">
 								<label htmlFor={`field-inline-${index}`}>
 									Inline
 								</label>
@@ -469,6 +477,7 @@ export default function Home() {
 											e.target.checked;
 										setFields(newFields);
 									}}
+									className="mt-2"
 								/>
 							</div>
 						</details>
@@ -521,8 +530,8 @@ export default function Home() {
 						label="Footer Icon URL"
 						value={[footerIcon, setFooterIcon]}
 					/>
-					<div>
-						<label htmlFor="timestamp">Timestamp</label>
+					<div className="flex items-center gap-2">
+						<label htmlFor="timestamp">Timestamp?</label>
 						<input
 							type="checkbox"
 							id="timestamp"
@@ -532,6 +541,7 @@ export default function Home() {
 									e.target.checked ? Date.now() : undefined
 								)
 							}
+							className="mt-2"
 						/>
 					</div>
 				</details>
