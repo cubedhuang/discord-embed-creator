@@ -6,7 +6,7 @@ import DiscordEmbed from "../components/DiscordEmbed";
 import LimitedInput from "../components/LimitedInput";
 import Output from "../components/Output";
 import ValueInput from "../components/ValueInput";
-import type { Embed } from "../lib/interfaces";
+import { Embed, EmbedField } from "../lib/interfaces";
 
 function ellipses(str: string, max = 50) {
 	return str.length > max ? `${str.slice(0, max - 3)}...` : str;
@@ -30,16 +30,15 @@ function setAllDetails(open: boolean) {
 	}
 }
 
-export default function Home() {
-	const [authorIcon, setAuthorIcon] = useState("");
-	const [authorName, setAuthorName] = useState("Example Author");
-	const [authorUrl, setAuthorUrl] = useState("https://example.com");
-
-	const [title, setTitle] = useState("Example Title");
-	const [url, setUrl] = useState("https://example.com");
-
-	const [description, setDescription] = useState(
-		`This is an example description. Markdown works too!
+const infoEmbed: Embed = {
+	author: {
+		name: "Info",
+		url: "https://example.com",
+		iconUrl: ""
+	},
+	title: "Example Title",
+	url: "https://example.com",
+	description: `This is an example description. Markdown works too!
 
 https://automatic.links
 > Block Quotes
@@ -53,11 +52,9 @@ Code Blocks
 ||Spoilers||
 ~~Strikethrough~~
 **Strong**
-__Underline__
-`
-	);
-
-	const [fields, setFields] = useState([
+__Underline__`,
+	color: "#00b0f4",
+	fields: [
 		{
 			name: "Field Name",
 			value: "This is the field value.",
@@ -83,23 +80,36 @@ __Underline__
 			value: "It won't stack with the previous inline fields.",
 			inline: true
 		}
-	]);
+	],
+	image: "https://cubedhuang.com/images/alex-knight-unsplash.webp",
+	thumbnail: "https://dan.onl/images/emptysong.jpg",
+	footer: {
+		text: "Example Footer",
+		iconUrl: "https://slate.dan.onl/slate.png"
+	},
+	timestamp: Date.now()
+};
 
-	const [image, setImage] = useState(
-		"https://cubedhuang.com/images/alex-knight-unsplash.webp"
-	);
-	const [thumbnail, setThumbnail] = useState(
-		"https://dan.onl/images/emptysong.jpg"
-	);
+export default function Home() {
+	const [authorIcon, setAuthorIcon] = useState("");
+	const [authorName, setAuthorName] = useState("");
+	const [authorUrl, setAuthorUrl] = useState("");
 
-	const [color, setColor] = useState<string | undefined>("#00b0f4");
+	const [title, setTitle] = useState("");
+	const [url, setUrl] = useState("");
+	const [description, setDescription] = useState("");
+	const [color, setColor] = useState<string | undefined>("#202225");
 
-	const [footerText, setFooterText] = useState("Example footer!");
-	const [footerIcon, setFooterIcon] = useState(
-		"https://slate.dan.onl/slate.png"
-	);
+	const [fields, setFields] = useState<EmbedField[]>([]);
 
+	const [image, setImage] = useState("");
+	const [thumbnail, setThumbnail] = useState("");
+
+	const [footerText, setFooterText] = useState("");
+	const [footerIcon, setFooterIcon] = useState("");
 	const [timestamp, setTimestamp] = useState<number | undefined>(undefined);
+
+	const [embedLoaded, setEmbedLoaded] = useState(false);
 
 	const [error, setError] = useState<string | undefined>(undefined);
 
@@ -109,7 +119,14 @@ __Underline__
 
 	useEffect(() => {
 		(async () => {
+			if (!router.isReady) return;
+
 			const { data, id } = router.query;
+
+			if (!data && !id) {
+				if (!embedLoaded) loadEmbed(infoEmbed);
+				return;
+			}
 
 			try {
 				let embed: any;
@@ -128,31 +145,12 @@ __Underline__
 					embed = JSON.parse(atob(embedString));
 				}
 
-				if (!embed) return;
-
-				router.push("/", "/", { shallow: true });
-
-				setAuthorIcon(embed.author?.iconUrl ?? "");
-				setAuthorName(embed.author?.name ?? "");
-				setAuthorUrl(embed.author?.url ?? "");
-
-				setTitle(embed.title ?? "");
-				setUrl(embed.url ?? "");
-				setDescription(embed.description ?? "");
-
-				setFields(embed.fields ?? []);
-
-				setImage(embed.image?.url ?? "");
-				setThumbnail(embed.thumbnail?.url ?? "");
-
-				setColor(embed.color);
-
-				setFooterText(embed.footer?.text ?? "");
-				setFooterIcon(embed.footer?.iconUrl ?? "");
-
-				setTimestamp(embed.timestamp);
+				loadEmbed(embed);
 			} catch (e) {
-				setError("Invalid imported embed!");
+				loadEmbed(infoEmbed);
+				setError("An error occurred while importing the embed!");
+			} finally {
+				router.push("/", "/", { shallow: true });
 			}
 		})();
 	}, [router]);
@@ -174,6 +172,30 @@ __Underline__
 			);
 		}
 	}, [title, description, fields, footerText, authorName]);
+
+	function loadEmbed(embed: Embed) {
+		setAuthorIcon(embed.author?.iconUrl ?? "");
+		setAuthorName(embed.author?.name ?? "");
+		setAuthorUrl(embed.author?.url ?? "");
+
+		setTitle(embed.title ?? "");
+		setUrl(embed.url ?? "");
+		setDescription(embed.description ?? "");
+
+		setFields(embed.fields ?? []);
+
+		setImage(embed.image ?? "");
+		setThumbnail(embed.thumbnail ?? "");
+
+		setColor(embed.color);
+
+		setFooterText(embed.footer?.text ?? "");
+		setFooterIcon(embed.footer?.iconUrl ?? "");
+
+		setTimestamp(embed.timestamp);
+
+		setEmbedLoaded(true);
+	}
 
 	const embed: Embed = {
 		author: {
@@ -317,12 +339,24 @@ __Underline__
 					/>
 					<div>
 						<label htmlFor="color">Color</label>
-						<input
-							type="color"
-							id="color"
-							value={color}
-							onChange={e => setColor(e.target.value)}
-						/>
+						<div className="flex items-center gap-2">
+							<input
+								type="color"
+								id="color"
+								value={color}
+								onChange={e => setColor(e.target.value)}
+								disabled={!color}
+							/>
+							<input
+								type="checkbox"
+								checked={color ? true : false}
+								onChange={e =>
+									setColor(
+										e.target.checked ? "#202225" : undefined
+									)
+								}
+							/>
+						</div>
 					</div>
 				</details>
 				<details open className="fields">
