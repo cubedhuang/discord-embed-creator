@@ -121,17 +121,14 @@ export default function Output({ embed }: { embed: Embed }) {
 		if (embed.author.name || embed.author.url || embed.author.iconUrl) {
 			output += `\nembed.set_author(`;
 
-			if (embed.author.name) output += s`name=${embed.author.name}`;
-			if (embed.author.url) {
-				if (embed.author.name) output += `,\n                 `;
-				output += s`url=${embed.author.url}`;
-			}
-			if (embed.author.iconUrl) {
-				if (embed.author.name || embed.author.url)
-					output += `,\n                 `;
-				output += s`icon_url=${embed.author.iconUrl},`;
-			}
-			output += ")\n";
+			const kwargs = [];
+
+			if (embed.author.name) kwargs.push(s`name=${embed.author.name}`);
+			if (embed.author.url) kwargs.push(s`url=${embed.author.url}`);
+			if (embed.author.iconUrl)
+				kwargs.push(s`icon_url=${embed.author.iconUrl}`);
+
+			output += `${kwargs.join(`,\n                 `)})\n`;
 		}
 
 		if (embed.fields.length > 0) {
