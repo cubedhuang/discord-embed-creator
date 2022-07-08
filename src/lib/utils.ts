@@ -23,14 +23,14 @@ function clearEmptySlots<T extends object>(
 
 	if (Array.isArray(obj)) {
 		// @ts-expect-error
-		return obj.map(clearEmptySlots);
+		return obj.map(e => clearEmptySlots(e, objectCode));
 	}
 
 	return Object.entries(obj).reduce((acc, [key, value]) => {
 		if (objectCode)
 			key = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 		if (typeof value === "object") {
-			const cleared = clearEmptySlots(value);
+			const cleared = clearEmptySlots(value, objectCode);
 
 			if (Object.keys(cleared).length === 0) return acc;
 
