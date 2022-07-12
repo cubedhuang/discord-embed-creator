@@ -157,7 +157,7 @@ export default function Output({ embed }: { embed: Embed }) {
 			output += `)\n`;
 		}
 
-		output += `\nawait ctx.send(embed)`;
+		output += `\nawait ctx.send(embed=embed)`;
 	}
 
 	return (
