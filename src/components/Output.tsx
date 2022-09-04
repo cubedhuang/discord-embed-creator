@@ -19,7 +19,7 @@ function s(strings: TemplateStringsArray, ...values: string[]) {
 
 export default function Output({ embed }: { embed: Embed }) {
 	const [language, setLanguage] = useState<"json" | "js" | "py">("js");
-	const [jsVersion, setJsVersion] = useState("13");
+	const [jsVersion, setJsVersion] = useState("14");
 	const [jsMode, setJsMode] = useState("chained");
 
 	let output = "";
