@@ -93,9 +93,7 @@ export default function Output({ embed }: { embed: Embed }) {
 
 			output += steps.join(jsMode === "chained" ? "\n  " : ";\nembed");
 
-			output += `;\n\nawait message.reply({ embeds: [embed${
-				jsVersion === "14" ? ".toJSON()" : ""
-			}] });`;
+			output += `;\n\nawait message.reply({ embeds: [embed] });`;
 		} else {
 			output += `await message.reply({\n`;
 			output += `  embeds: [${embedToObjectCode(embed).replaceAll(
