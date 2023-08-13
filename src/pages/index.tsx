@@ -228,7 +228,7 @@ export default function Home() {
 		<div className="screen flex min-h-screen">
 			<div className="flex-1 embed-inputs">
 				<div>
-					<div className="flex justify-between">
+					<div className="flex justify-between items-baseline">
 						<h1 className="text-white font-semibold text-2xl">
 							Discord Embed Creator
 						</h1>

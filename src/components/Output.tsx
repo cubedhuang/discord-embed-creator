@@ -4,12 +4,12 @@ import type { Embed } from "../lib/interfaces";
 import { embedToObjectCode } from "../lib/utils";
 import Highlight from "./Highlight";
 
-function s(strings: TemplateStringsArray, ...values: string[]) {
+function s(strings: TemplateStringsArray, ...values: unknown[]) {
 	let escaped = "";
 
 	for (let i = 0; i < strings.length; i++) {
 		if (i > 0) {
-			escaped += JSON.stringify(values[i - 1]);
+			escaped += JSON.stringify(`${values[i - 1]}`);
 		}
 		escaped += strings[i];
 	}
@@ -18,9 +18,11 @@ function s(strings: TemplateStringsArray, ...values: string[]) {
 }
 
 export default function Output({ embed }: { embed: Embed }) {
-	const [language, setLanguage] = useState<"json" | "js" | "py">("js");
+	const [language, setLanguage] = useState<"json" | "js" | "py" | "rs">("js");
 	const [jsVersion, setJsVersion] = useState("14");
 	const [jsMode, setJsMode] = useState("chained");
+	const [rsMode, setRsMode] = useState("variable"); // variable or closure
+	const [rsFields, setRsFields] = useState("together"); // together or separate
 
 	let output = "";
 
@@ -102,7 +104,7 @@ export default function Output({ embed }: { embed: Embed }) {
 			)}]\n`;
 			output += `});\n`;
 		}
-	} else {
+	} else if (language === "py") {
 		output += `embed = discord.Embed(`;
 
 		const kwargs = [];
@@ -156,6 +158,88 @@ export default function Output({ embed }: { embed: Embed }) {
 		}
 
 		output += `\nawait ctx.send(embed=embed)`;
+	} else if (language === "rs") {
+		output =
+			"// You may need to import additional things to make this work\n\n";
+
+		output +=
+			rsMode === "variable"
+				? `let embed = CreateEmbed::default()`
+				: "let msg = msg\n    .channel_id\n    .send_message(&ctx.http, |m| {\n        m.embed(|e| {\n            e";
+
+		const steps = rsMode === "variable" ? [""] : [];
+
+		const substepsSeparator =
+			rsMode === "variable" ? "\n        " : "\n                    ";
+
+		if (embed.title) steps.push(s`.title(${embed.title})`);
+		if (embed.url) steps.push(s`.url(${embed.url})`);
+		if (embed.description)
+			steps.push(s`.description(${embed.description})`);
+		if (embed.color)
+			steps.push(
+				`.color(Colour::new(${embed.color.replace("#", "0x")}))`
+			);
+		if (embed.timestamp) steps.push(`.timestamp(Timestamp::now())`);
+
+		if (embed.author.name || embed.author.url || embed.author.iconUrl) {
+			const first = `.author(|a| {${substepsSeparator}a`;
+			const substeps = [];
+
+			if (embed.author.name)
+				substeps.push(s`.name(${embed.author.name})`);
+			if (embed.author.url) substeps.push(s`.url(${embed.author.url})`);
+			if (embed.author.iconUrl)
+				substeps.push(s`.icon_url(${embed.author.iconUrl})`);
+
+			steps.push(first + substeps.join(substepsSeparator + "    "), `})`);
+		}
+
+		if (embed.fields.length > 0) {
+			if (rsFields === "together") {
+				const substeps = [`.fields(vec![`];
+
+				for (const field of embed.fields) {
+					substeps.push(
+						s`(${field.name}, ${field.value}, ${field.inline}),`
+					);
+				}
+
+				steps.push(substeps.join(substepsSeparator), `])`);
+			} else {
+				for (const field of embed.fields) {
+					steps.push(
+						s`.field(${field.name}, ${field.value}, ${field.inline})`
+					);
+				}
+			}
+		}
+
+		if (embed.image) steps.push(s`.image(${embed.image})`);
+
+		if (embed.thumbnail) steps.push(s`.thumbnail(${embed.thumbnail})`);
+
+		if (embed.footer.text || embed.footer.iconUrl) {
+			const first = `.footer(|f| {${substepsSeparator}f`;
+			const substeps = [];
+
+			if (embed.footer.text)
+				substeps.push(s`.text(${embed.footer.text})`);
+			if (embed.footer.iconUrl)
+				substeps.push(s`.icon_url(${embed.footer.iconUrl})`);
+
+			steps.push(first + substeps.join(substepsSeparator + "    "), `})`);
+		}
+
+		output += steps.join(
+			rsMode === "variable" ? "\n    " : "\n                "
+		);
+
+		if (rsMode === "closure") {
+			output += `\n        })\n    })\n    .await;`;
+		} else {
+			output += `;\n\nlet msg = msg\n    .channel_id\n    .send_message(&ctx.http, |m| m.set_embed(embed))\n    .await;`;
+		}
 	}
 
 	return (
@@ -172,6 +256,7 @@ export default function Output({ embed }: { embed: Embed }) {
 					<option value="json">JSON representation</option>
 					<option value="js">discord.js</option>
 					<option value="py">discord.py</option>
+					<option value="rs">serenity (rust)</option>
 				</select>
 
 				{language === "js" ? (
@@ -195,6 +280,30 @@ export default function Output({ embed }: { embed: Embed }) {
 							<option value="chained">Builder (Chained)</option>
 							<option value="split">Builder (Split)</option>
 							<option value="object">Object</option>
+						</select>
+					</>
+				) : null}
+
+				{language === "rs" ? (
+					<>
+						<select
+							name="mode"
+							id="mode"
+							value={rsMode}
+							onChange={e => setRsMode(e.target.value)}
+						>
+							<option value="variable">Separate Variable</option>
+							<option value="closure">In a Closure</option>
+						</select>
+
+						<select
+							name="fields"
+							id="fields"
+							value={rsFields}
+							onChange={e => setRsFields(e.target.value)}
+						>
+							<option value="together">Fields Together</option>
+							<option value="separate">Fields Separate</option>
 						</select>
 					</>
 				) : null}
