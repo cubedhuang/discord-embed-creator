@@ -65,6 +65,7 @@ export default function Output({ embed }: { embed: Embed }) {
 					substeps.push(s`    name: ${field.name},`);
 					substeps.push(s`    value: ${field.value},`);
 					if (field.inline) substeps.push(`    inline: true`);
+					else 			  substeps.push(`    inline: false`);
 					substeps.push(`  },`);
 				}
 				substeps.push(`)`);
@@ -136,6 +137,7 @@ export default function Output({ embed }: { embed: Embed }) {
 				output += s`\nembed.add_field(name=${field.name},\n`;
 				output += s`                value=${field.value}`;
 				if (field.inline) output += `,\n                inline=True`;
+				else 			  output += `,\n                inline=False`;
 				output += ")";
 			}
 			output += "\n";
