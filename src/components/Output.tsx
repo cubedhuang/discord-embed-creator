@@ -203,16 +203,23 @@ export default function Output({ embed }: { embed: Embed }) {
 
 				for (const field of embed.fields) {
 					substeps.push(
-						s`(${field.name}, ${field.value}, ${field.inline}),`
+						s`(${field.name}, ${field.value}, `
 					);
+                                        // third argument to fields() should be a boolean, not string
+                                        if (field.inline) substeps[substeps.length - 1] += `true)`;
+					else substeps[substeps.length - 1] += `false)`;
+
 				}
 
 				steps.push(substeps.join(substepsSeparator), `])`);
 			} else {
 				for (const field of embed.fields) {
 					steps.push(
-						s`.field(${field.name}, ${field.value}, ${field.inline})`
+						s`.field(${field.name}, ${field.value}, `
 					);
+                                        // third argument to fields() should be a boolean, not string
+                                        if (field.inline) steps[steps.length - 1] += `true)`;
+					else steps[steps.length - 1] += `false)`;
 				}
 			}
 		}
